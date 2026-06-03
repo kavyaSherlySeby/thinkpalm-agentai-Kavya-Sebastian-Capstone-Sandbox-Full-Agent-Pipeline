@@ -138,12 +138,26 @@ Agents remain **independent**; tools are injected via constructors and invoked e
 | Dashboard Planning | `ValidatorTool` | `validate` | Layout, sections, and widgets checks |
 | Component Generation | `ExportTool` | `buildExport` | TSX strings → downloadable `.tsx.txt` |
 
-### ClaudeTool (Anthropic)
+### ClaudeTool (dual mode)
+
+`ClaudeTool` supports two analysis modes. The UI **Tool Activity** panel shows which mode ran:
+
+```
+ClaudeTool
+├─ Claude API Mode (supported | currently active)
+└─ Local Fallback Mode (supported | currently active)
+```
+
+| Mode | When used | Behavior |
+|------|-----------|----------|
+| **Claude API Mode** | `ANTHROPIC_API_KEY` is set and the API succeeds | Anthropic Messages API returns structured `RequirementAnalysis` JSON via `POST /api/analyze-prd` |
+| **Local Fallback Mode** | API key missing, network error, or API failure | Deterministic keyword extraction (temperature, fuel, GPS, alerts, sensors) in `RequirementAnalysisAgent` |
+
+To allow **offline testing and evaluation without API costs**, the `ClaudeTool` path includes a deterministic keyword-extraction fallback that **preserves the full agent workflow** when an API key is not configured or the Anthropic API is unavailable. The pipeline still completes: planning and component generation run on the keyword-derived requirements.
 
 - **Client:** `src/tools/claude-tool.ts` — calls `POST /api/analyze-prd` (no SDK in browser bundle).
 - **Server:** `src/lib/anthropic/analyze-requirements.ts` — Anthropic Messages API.
-- **Env:** `ANTHROPIC_API_KEY` (required for live analysis).
-- **Failure handling:** HTTP errors, parse errors, and network issues throw `ClaudeApiError`; the requirement agent catches and falls back.
+- **Env:** `ANTHROPIC_API_KEY` (required for Claude API Mode).
 
 ### ValidatorTool
 
@@ -170,6 +184,8 @@ Validates `DashboardArchitecture`:
   "summary": "PRD analyzed via Anthropic (claude-sonnet-4-20250514)",
   "output": { "source": "anthropic", "model": "...", "analysisId": "..." }
 }
+
+When fallback runs, `output.source` is `"fallback"` and the UI marks **Local Fallback Mode** as currently active.
 ```
 
 ---

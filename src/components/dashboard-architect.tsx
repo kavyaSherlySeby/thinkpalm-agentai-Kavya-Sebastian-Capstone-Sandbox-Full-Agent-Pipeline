@@ -272,31 +272,120 @@ function groupPlansBySection(
   return grouped;
 }
 
+function isClaudeToolOutput(
+  output: unknown,
+): output is { source: "anthropic" | "fallback"; error?: string; model?: string } {
+  return (
+    !!output &&
+    typeof output === "object" &&
+    "source" in output &&
+    ((output as { source: string }).source === "anthropic" ||
+      (output as { source: string }).source === "fallback")
+  );
+}
+
+function ClaudeToolModeTree({
+  activeMode,
+  errorMessage,
+  model,
+}: {
+  activeMode: "anthropic" | "fallback";
+  errorMessage?: string;
+  model?: string;
+}) {
+  const apiActive = activeMode === "anthropic";
+  const fallbackActive = activeMode === "fallback";
+
+  const line = (isActive: boolean) =>
+    isActive
+      ? "font-medium text-zinc-800 dark:text-zinc-200"
+      : "text-zinc-500 dark:text-zinc-400";
+
+  const tag = (isActive: boolean) =>
+    isActive ? (
+      <span className="text-emerald-600 dark:text-emerald-400">
+        (currently active)
+      </span>
+    ) : (
+      <span className="text-zinc-400 dark:text-zinc-500">(supported)</span>
+    );
+
+  return (
+    <div className="mt-2 rounded-lg border border-zinc-100 bg-zinc-50/80 p-3 font-mono text-xs dark:border-zinc-800 dark:bg-zinc-900/50">
+      <p className="font-sans text-sm font-semibold text-sky-600 dark:text-sky-400">
+        ClaudeTool
+      </p>
+      <p className={`mt-2 ${line(apiActive)}`}>
+        ├─ Claude API Mode {tag(apiActive)}
+        {apiActive && model ? (
+          <span className="block pl-4 font-sans text-zinc-500 dark:text-zinc-400">
+            model: {model}
+          </span>
+        ) : null}
+      </p>
+      <p className={`${line(fallbackActive)}`}>
+        └─ Local Fallback Mode {tag(fallbackActive)}
+        {fallbackActive ? (
+          <span className="block pl-4 font-sans font-normal text-zinc-500 dark:text-zinc-400">
+            deterministic keyword extraction
+          </span>
+        ) : null}
+      </p>
+      {errorMessage ? (
+        <p className="mt-2 rounded bg-amber-50 px-2 py-1 font-sans text-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
+          {errorMessage}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function ToolUsageList({ usages }: { usages: PipelineToolUsage[] }) {
   return (
     <ul className="space-y-3">
-      {usages.map((usage, index) => (
-        <li
-          key={`${usage.stage}-${usage.tool}-${index}`}
-          className="rounded-lg border border-zinc-100 p-3 dark:border-zinc-800"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-sky-600 dark:text-sky-400">
-              {usage.tool}
-            </span>
-            <span className="text-xs text-zinc-400">·</span>
-            <span className="text-xs text-zinc-500 capitalize dark:text-zinc-400">
-              {usage.stage.replace(/_/g, " ")}
-            </span>
-          </div>
-          <p className="mt-1 text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            {usage.action}
-          </p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            {usage.summary}
-          </p>
-        </li>
-      ))}
+      {usages.map((usage, index) => {
+        const claudeOutput = isClaudeToolOutput(usage.output)
+          ? usage.output
+          : null;
+
+        return (
+          <li
+            key={`${usage.stage}-${usage.tool}-${index}`}
+            className="rounded-lg border border-zinc-100 p-3 dark:border-zinc-800"
+          >
+            {usage.tool !== "ClaudeTool" ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-sky-600 dark:text-sky-400">
+                  {usage.tool}
+                </span>
+                <span className="text-xs text-zinc-400">·</span>
+                <span className="text-xs text-zinc-500 capitalize dark:text-zinc-400">
+                  {usage.stage.replace(/_/g, " ")}
+                </span>
+              </div>
+            ) : null}
+            {usage.tool !== "ClaudeTool" ? (
+              <p className="mt-1 text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                {usage.action}
+              </p>
+            ) : null}
+            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="capitalize text-zinc-400">
+                {usage.stage.replace(/_/g, " ")}
+              </span>
+              {usage.tool !== "ClaudeTool" ? " · " : null}
+              {usage.summary}
+            </p>
+            {usage.tool === "ClaudeTool" && claudeOutput ? (
+              <ClaudeToolModeTree
+                activeMode={claudeOutput.source}
+                errorMessage={claudeOutput.error}
+                model={claudeOutput.model}
+              />
+            ) : null}
+          </li>
+        );
+      })}
     </ul>
   );
 }

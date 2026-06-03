@@ -122,7 +122,7 @@ export class RequirementAnalysisAgent {
       toolUsage.push({
         tool: "ClaudeTool",
         action: "analyzePRD",
-        summary: `Claude API unavailable — using keyword extraction fallback`,
+        summary: `Local Fallback Mode active — keyword extraction (Claude API Mode unavailable)`,
         output: {
           source: "fallback",
           analysisId: keywordAnalysis.id,
