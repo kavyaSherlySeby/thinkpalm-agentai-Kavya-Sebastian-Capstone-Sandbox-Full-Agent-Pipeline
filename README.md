@@ -223,7 +223,7 @@ Each saved generation can include a `PipelineGenerationSnapshot` (analysis, comp
 ### Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/kavyaSherlySeby/thinkpalm-agentai-Kavya-Sebastian-Capstone-Sandbox-Full-Agent-Pipeline
 cd intelligent-iot-dashboard-architect
 npm install
 ```
