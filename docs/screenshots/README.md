@@ -19,11 +19,11 @@ npm run capture-screenshots
 | `01-dashboard-overview.png`   | Full page at 1440px width                 |
 | `02-prd-input.png`            | PRD textarea + Generate button            |
 | `03-agent-activity.png`       | Agent progress during pipeline run        |
-| `04-tool-activity.png`        | Tool activity cards (live during run)     |
+| `04-tool-activity.png`        | ClaudeTool API/Fallback mode tree + other tools |
 | `05-requirement-analysis.png` | Requirement Analysis JSON panel           |
 | `06-architecture.png`         | Dashboard Architecture panel              |
 | `07-component-tree.png`       | Component Tree by section                 |
 | `08-generated-code.png`       | Generated Code + Download export          |
-| `09-memory-history.png`       | Memory History with “Full snapshot” badge |
+| `09-memory-history.png`       | Memory History with **Full Snapshot** badge |
 
 

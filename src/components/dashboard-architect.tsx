@@ -737,7 +737,7 @@ export function DashboardArchitect() {
 
             <Card
               title="Memory History"
-              description="Saved generations in browser localStorage"
+              description="Persistent localStorage — Full Snapshot restores analysis, code, tools, and execution"
             >
               {history.length > 0 ? (
                 <ul className="grid gap-3 sm:grid-cols-2">
@@ -765,7 +765,7 @@ export function DashboardArchitect() {
                         </p>
                         {entry.snapshot ? (
                           <p className="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                            Full snapshot
+                            Full Snapshot
                           </p>
                         ) : null}
                       </button>

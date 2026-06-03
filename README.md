@@ -216,11 +216,11 @@ Persists dashboard generations in **browser `localStorage`** (key: `iot-dashboar
 
 | Method | Description |
 |--------|-------------|
-| `saveGeneration()` | Store metadata, architecture, and optional **full pipeline snapshot** |
+| `saveGeneration()` | Store metadata, architecture, and optional **Full Snapshot** (full pipeline) |
 | `getHistory()` | All records, newest first |
 | `loadGeneration(id)` | Retrieve one generation |
 
-Each saved generation can include a `PipelineGenerationSnapshot` (analysis, components, export, toolUsage, execution, validation). The UI restores the **full dashboard state** when loading history entries that include a snapshot.
+Each saved generation can include a **Full Snapshot** (`PipelineGenerationSnapshot`: analysis, components, export, toolUsage, execution, validation). History cards show a **Full Snapshot** badge; clicking one restores the complete dashboard state.
 
 ### Live tool activity
 
@@ -430,12 +430,12 @@ npm run capture-screenshots
 | ![Dashboard overview](docs/screenshots/01-dashboard-overview.png) | Full dashboard UI |
 | ![PRD input](docs/screenshots/02-prd-input.png) | PRD textarea and Generate button |
 | ![Agent activity](docs/screenshots/03-agent-activity.png) | Pending → Running → Completed progress |
-| ![Tool activity](docs/screenshots/04-tool-activity.png) | Live Claude / Validator / Export tool cards |
+| ![Tool activity](docs/screenshots/04-tool-activity.png) | ClaudeTool dual mode tree (API vs Local Fallback) + Validator / Export |
 | ![Requirement analysis](docs/screenshots/05-requirement-analysis.png) | Structured JSON output |
 | ![Architecture](docs/screenshots/06-architecture.png) | Dashboard architecture panel |
 | ![Component tree](docs/screenshots/07-component-tree.png) | Components grouped by section |
 | ![Generated code](docs/screenshots/08-generated-code.png) | TSX export preview |
-| ![Memory history](docs/screenshots/09-memory-history.png) | Saved generations with full snapshot badge |
+| ![Memory history](docs/screenshots/09-memory-history.png) | Memory History with **Full Snapshot** badge (restores full pipeline state) |
 
 Regenerate with `npm run capture-screenshots` (dev server must be running). See `docs/screenshots/README.md`.
 
